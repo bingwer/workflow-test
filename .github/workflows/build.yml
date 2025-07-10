@@ -53,6 +53,7 @@ jobs:
           APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
           APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
           APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+
         run: |
           echo "Creating .env file..."
           echo "CSC_NAME=$CSC_NAME" >> .env
@@ -60,6 +61,7 @@ jobs:
           echo "APPLE_API_KEY_ID=$APPLE_API_KEY_ID" >> .env
           echo "APPLE_API_ISSUER=$APPLE_API_ISSUER" >> .env
           echo ".env file created"
+          echo ${{ secrets.APPLE_KEY_FILE }} | base64 -d > apple-api-key.p8
           cat .env
 
       - name: Build Electron app
