@@ -42,7 +42,7 @@ const config = {
       },
     ],
   },
-  win: {
+  ...(process.platform === 'win32' ? { win: {
     target: 'nsis',
     icon: 'extra-resources/icon.ico',
   },
@@ -57,7 +57,7 @@ const config = {
     displayLanguageSelector: false,
     installerIcon: 'extra-resources/icon.ico',
     uninstallerIcon: 'extra-resources/icon.ico',
-  },
+    }} : {}),  
   protocols: {
     name: 'Sphere',
     schemes: ['sphere'],
