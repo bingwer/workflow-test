@@ -67,7 +67,7 @@ const config = {
       ext: 'sp',
       name: 'Sphere Document',
       description: 'Sphere Document File',
-      icon: process.platform === 'win32' ? 'extra-resources/icon.ico' : 'extra-resources/icon.icns',
+      icon: 'extra-resources/icon'
     },
   ],
   publish: {
