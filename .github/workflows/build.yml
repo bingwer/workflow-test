@@ -19,7 +19,6 @@ jobs:
           rm -rf out/
           rm -rf dist/
           rm -rf node_modules/.cache/
-          rm -rf main/
           rm -rf renderer/out/
           rm -rf renderer/.next/
           rm -rf /Users/runner/work/workflow-test/workflow-test/out/
@@ -38,6 +37,15 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Check project structure
+        run: |
+          echo "Checking project structure..."
+          ls -la
+          echo "Checking main folder..."
+          ls -la main/ || echo "main folder not found"
+          echo "Checking renderer folder..."
+          ls -la renderer/ || echo "renderer folder not found"
 
       - name: Create .env file
         env:
