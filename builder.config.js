@@ -64,10 +64,9 @@ const config = {
   },
   fileAssociations: [
     {
-      ext: 'sp',
+      ext: 'sp', 
       name: 'Sphere Document',
       description: 'Sphere Document File',
-      icon: 'extra-resources/icon'
     },
   ],
   publish: {
