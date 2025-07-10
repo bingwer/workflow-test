@@ -22,7 +22,7 @@ jobs:
           rm -rf main/
           rm -rf renderer/out/
           rm -rf renderer/.next/
-          rm -rf /Users/runner/work/sphere/sphere/out/
+          rm -rf /Users/runner/work/workflow-test/workflow-test/out/
           echo "Clean completed"
 
       - name: Install pnpm

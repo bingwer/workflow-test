@@ -1,5 +1,5 @@
 {
-  "name": "sphere",
+  "name": "workflow-test",
   "version": "0.1.0",
   "description": "Electron build test with React and TypeScript",
   "main": "dist/main.js",
