@@ -82,6 +82,9 @@ jobs:
           echo "setting up keychain completed"
 
           echo "Starting Mac build..."
+          # Clean any existing app bundles before building
+          rm -rf out/mac-arm64/Sphere.app || true
+          rm -rf out/mac-arm64/Electron.app || true
           pnpm run publish
           echo "Mac build completed"
 
