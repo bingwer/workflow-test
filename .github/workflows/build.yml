@@ -1,0 +1,90 @@
+name: Mac-arm Build
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  build-mac-arm:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Clean previous builds
+        run: |
+          echo "Cleaning previous build artifacts..."
+          rm -rf out/
+          rm -rf dist/
+          rm -rf node_modules/.cache/
+          rm -rf main/
+          rm -rf renderer/out/
+          rm -rf renderer/.next/
+          rm -rf /Users/runner/work/sphere/sphere/out/
+          echo "Clean completed"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '23'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create .env file
+        env:
+          CSC_NAME: ${{ secrets.CSC_NAME }}
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+        run: |
+          echo "Creating .env file..."
+          echo "CSC_NAME=$CSC_NAME" >> .env
+          echo "APPLE_API_KEY=$APPLE_API_KEY" >> .env
+          echo "APPLE_API_KEY_ID=$APPLE_API_KEY_ID" >> .env
+          echo "APPLE_API_ISSUER=$APPLE_API_ISSUER" >> .env
+          echo ".env file created"
+          cat .env
+
+      - name: Build Electron app
+        env:
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{secrets.API_HASH_KEY}}
+          CSC_NAME: ${{secrets.CSC_NAME}}
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+        run: |
+          echo "Setting up keychain..."
+          KEYCHAIN_PASSWORD="temp_keychain_password"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          echo "$CSC_LINK" | base64 -d > certificate.p12
+          security import certificate.p12 -k build.keychain -P "$CSC_KEY_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" build.keychain
+          echo "setting up keychain completed"
+
+          echo "Starting Mac build..."
+          pnpm run publish
+          echo "Mac build completed"
+
+      # - name: Upload Mac Setup to GCS
+      #   run: |
+      #     echo "Uploading Mac setup to GCS..."
+      #    pnpm run upload:ci
+
+      - name: Upload Mac Setup
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac-setup
+          path: out/sphere_setup_*.dmg
+          retention-days: 7

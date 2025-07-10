@@ -1,0 +1,33 @@
+{
+  "name": "electron-build-test",
+  "version": "0.1.0",
+  "description": "Electron build test with React and TypeScript",
+  "main": "dist/main.js",
+  "scripts": {
+    "postinstall": "cd renderer && pnpm install",
+    "dev": "cross-env NODE_ENV=development concurrently -k \"pnpm:build:main -w\" \"pnpm:start:renderer\" \"pnpm:start:electron-dev\"",
+    "start": "pnpm build && cross-env NODE_ENV=production electron .",
+    "start:renderer": "cd renderer && pnpm start",
+    "start:electron-dev": "wait-on http://localhost:3000 && electron .",
+    "build": "pnpm build:main && pnpm build:renderer",
+    "build:main": "tsc -p tsconfig.main.json",
+    "build:renderer": "cd renderer && pnpm run build",
+    "pack": "pnpm build && electron-builder --config builder.config.js --dir",
+    "dist": "pnpm build && electron-builder --config builder.config.js",
+    "publish": "pnpm build && electron-builder --config builder.config.js --mac --publish always"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "electron": "^29.4.6",
+    "electron-builder": "^26.0.12",
+    "typescript": "^5.4.3",
+    "wait-on": "^7.2.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  }
+}
